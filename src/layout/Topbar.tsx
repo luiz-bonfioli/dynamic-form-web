@@ -9,8 +9,8 @@ type TopbarProps = {
 export function Topbar({title}: TopbarProps) {
     return (
         <div className={styles.layoutTopbar}>
-            <i className="pi pi-fw pi-file m-2 !text-3xl"></i>
-            <span>{title}</span>
+            <i className="pi pi-fw pi-file m-2 !text-2xl"></i>
+            <span className="!text-xl">{title}</span>
         </div>
     )
 }
