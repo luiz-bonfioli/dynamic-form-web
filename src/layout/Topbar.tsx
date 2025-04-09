@@ -1,5 +1,6 @@
 import React, {useEffect} from "react";
 import styles from './layout.module.css';
+import {Button} from "primereact/button";
 
 
 type TopbarProps = {
@@ -8,19 +9,10 @@ type TopbarProps = {
 
 export function Topbar({title}: TopbarProps) {
 
-    useEffect(() => {
-        console.log('Topbar component mounted');
-    }, []);
-
     return (
         <div className={styles.layoutTopbar}>
+            <i className="pi pi-fw pi-file m-2 !text-3xl"></i>
             <span>{title}</span>
-            {/*<Button*/}
-            {/*    icon="pi pi-plus"*/}
-            {/*    className="mr-2"*/}
-            {/*    label="Increment"*/}
-
-            {/*></Button>*/}
         </div>
     )
 }

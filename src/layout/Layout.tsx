@@ -31,16 +31,16 @@ export function Layout() {
                                 <Link to="/forms">Forms List</Link>
                             </li>
                             <li className="inline-block align-top">
-                                <i className="pi pi-fw pi-file-plus m-2"></i>
+                                <i className="pi pi-fw pi-wrench m-2"></i>
                                 <Link to="/forms/builder">Forms Builder</Link>
                             </li>
                             <li className="inline-block align-top">
-                                <i className="pi pi-fw pi-file-plus m-2"></i>
+                                <i className="pi pi-fw pi-database m-2"></i>
                                 <Link to="/forms/builder">Forms Data</Link>
                             </li>
                             <li className="inline-block align-top">
                                 <i className="pi pi-fw pi-file-plus m-2"></i>
-                                <Link to="/forms/builder">Forms</Link>
+                                <Link to="/forms/builder">Forms Input</Link>
                             </li>
                         </ul>
                     </nav>
