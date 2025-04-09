@@ -1,6 +1,5 @@
-import React, {useEffect} from "react";
+import React from "react";
 import styles from './layout.module.css';
-import {Button} from "primereact/button";
 
 
 type TopbarProps = {
@@ -8,7 +7,6 @@ type TopbarProps = {
 };
 
 export function Topbar({title}: TopbarProps) {
-
     return (
         <div className={styles.layoutTopbar}>
             <i className="pi pi-fw pi-file m-2 !text-3xl"></i>

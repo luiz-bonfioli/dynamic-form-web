@@ -13,7 +13,7 @@ export function Layout() {
         <>
             <div className={styles.layoutWrapper}>
                 <Routes>
-                    <Route path='/' element={<Container>Home</Container>}/>
+                    <Route path='/' element={<Container>Welcome to Dynamic Forms</Container>}/>
                     <Route path='/forms' element={<Forms/>}/>
                     <Route path='/forms/:id/builder' element={<FormDetail/>}/>
                     <Route path='/forms/builder' element={<FormDetail/>}/>
@@ -36,11 +36,11 @@ export function Layout() {
                             </li>
                             <li className="inline-block align-top">
                                 <i className="pi pi-fw pi-database m-2"></i>
-                                <Link to="/forms/builder">Forms Data</Link>
+                                <Link to="/forms/data">Forms Data</Link>
                             </li>
                             <li className="inline-block align-top">
                                 <i className="pi pi-fw pi-file-plus m-2"></i>
-                                <Link to="/forms/builder">Forms Input</Link>
+                                <Link to="/forms/input">Forms Input</Link>
                             </li>
                         </ul>
                     </nav>

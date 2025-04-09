@@ -22,7 +22,6 @@ export function Forms() {
 
     const handleClick = (item: Form) => {
         navigate(`/forms/${item.id}/builder`);
-        console.log('Clicked item:', item);
     };
 
     const handleNewClick = () => {
