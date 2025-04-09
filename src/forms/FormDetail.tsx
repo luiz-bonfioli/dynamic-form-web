@@ -55,18 +55,18 @@ export function FormDetail() {
             case 'text':
                 return renderFieldByKey(key, <InputText className="w-3/5" placeholder="Input Text" type="text"/>)
             case 'datetime':
-                return renderFieldByKey(key, <Calendar className="w-full" placeholder="Datetime" showTime showIcon
+                return renderFieldByKey(key, <Calendar className="w-3/5" placeholder="Datetime" showTime showIcon
                                                        hourFormat="24"/>)
             case 'number':
-                return renderFieldByKey(key, <InputNumber className="w-full" placeholder="Number" showButtons
+                return renderFieldByKey(key, <InputNumber className="w-3/5" placeholder="Number" showButtons
                                                           mode="decimal"/>)
             case 'boolean':
                 return renderFieldByKey(key, <div className="flex align-items-center">
-                    <Checkbox checked={true}/>
+                    <Checkbox className="w-3/5" checked={true}/>
                     <label className="ml-2">Boolean</label>
                 </div>)
             case 'rating':
-                return renderFieldByKey(key, <Rating className="w-full"/>)
+                return renderFieldByKey(key, <Rating className="w-3/5"/>)
             default:
                 return <div key={key}>Unknown Field Type: {key}</div>
         }
