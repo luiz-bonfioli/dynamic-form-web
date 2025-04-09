@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Container from "../layout/Container";
 import {fetchAll} from "../services/formsService";
-import {Form, ResponseData} from "../services/formsModel";
+import {Form} from "../services/formsModel";
 import styles from "../layout/layout.module.css";
 import {useNavigate} from "react-router-dom";
 import {Button} from "primereact/button";
@@ -9,12 +9,12 @@ import {Button} from "primereact/button";
 
 export function Forms() {
 
-    const [responseData, setResponseData] = useState<ResponseData>();
+    const [forms, setForms] = useState<Form[]>();
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchAll()
-            .then(setResponseData)
+            .then(setForms)
             .catch(err => {
                 console.log(err);
             })
@@ -34,7 +34,7 @@ export function Forms() {
             <div className="card flex justify-end">
                 <Button label="New" icon="pi pi-plus" onClick={handleNewClick}/>
             </div>
-            {responseData ? (
+            {forms ? (
                 <div
                     style={{
                         display: 'flex',
@@ -42,7 +42,7 @@ export function Forms() {
                         gap: '16px',
                     }}
                 >
-                    {responseData.data.map((item, index) => (
+                    {forms.map((item, index) => (
                         <div
                             key={index}
                             className={styles.card}

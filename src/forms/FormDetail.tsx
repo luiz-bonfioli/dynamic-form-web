@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Container from "../layout/Container";
 import {createForm, fetchById} from "../services/formsService";
-import {Field, FieldType, ResponseDataSingle} from "../services/formsModel";
+import {Field, FieldType, Form} from "../services/formsModel";
 import {useParams} from "react-router-dom";
 import {InputText} from "primereact/inputtext";
 import {Calendar} from "primereact/calendar";
@@ -11,26 +11,42 @@ import styles from '../layout/layout.module.css';
 import {Dialog} from "primereact/dialog";
 import {Rating} from "primereact/rating";
 import {Checkbox} from "primereact/checkbox";
+import {ZIndexUtils} from "primereact/utils";
+import set = ZIndexUtils.set;
+
 
 export function FormDetail() {
 
     const params = useParams<{ id: string }>()
-    const [responseData, setResponseData] = useState<ResponseDataSingle>()
+    const [form, setForm] = useState<Form>()
     const [datetime24h, setDateTime24h] = useState(null)
     const [loading, setLoading] = useState(false)
     const [fieldIndex, setFieldIndex] = useState(1)
     const [visible, setVisible] = useState(false)
     const [formName, setFormName] = useState('')
+    const [question, setQuestion] = useState<Record<string, any>>({})
+
+
+    function onQuestionChanged(key: string, value: string) {
+        const deepClone = JSON.parse(JSON.stringify(question));
+        deepClone[key] = value
+        setQuestion(deepClone)
+    }
 
     const headerElement = (
         <span className="layout-menuitem-text">Select the component</span>
     )
 
-
     const save = () => {
         setLoading(true);
-        if (responseData?.data) {
-            createForm(responseData?.data).then(r => {
+        if (form) {
+            form.name = formName
+
+            Object.entries(question).map(([key, question]) => {
+                form.fields[key].question = question
+            })
+
+            createForm(form).then(r => {
                 setLoading(false)
             })
         }
@@ -38,14 +54,13 @@ export function FormDetail() {
 
     const addNewComponent = (component: string) => {
         setVisible(false)
-        if (responseData?.data?.fields) {
-            responseData.data.fields["field-" + fieldIndex] = {
+        if (form?.fields) {
+            form.fields["field-" + fieldIndex] = {
                 type: component as FieldType,
-                question: "Fill your question",
+                question: "",
                 required: false
             }
-            setFieldIndex(fieldIndex + 1)
-            console.log(responseData.data.fields);
+            setFieldIndex(Object.keys(form.fields).length + 1)
         } else {
             console.warn("Response data or fields are not available.");
         }
@@ -54,34 +69,39 @@ export function FormDetail() {
     useEffect(() => {
         if (params.id) {
             fetchById(params.id)
-                .then((data) => {
-                    setResponseData(data)
-                    setFormName(data?.data?.name)
-                    setFieldIndex(Object.keys(data?.data.fields).length + 1)
+                .then((item) => {
+                    console.log(item);
+
+                    setFormName(item?.name)
+                    setFieldIndex(Object.keys(item.fields).length + 1)
+
+                    Object.entries(item.fields).map(([key, fieldAny]) => {
+                        question[key] = item.fields[key].question
+                    })
+
+                    setForm(item)
+                    console.log("xxx" + question)
 
                 })
                 .catch(err => {
                     console.log(err);
                 })
-
         } else {
-            let data = {
-                statusCode: "200",
-                data: {
-                    id: "form-123",
-                    name: "Feedback Form",
-                    fields: {}
-                }
-            }
-            setResponseData(data)
+            let form = {
+                id: "",
+                name: "",
+                fields: {}
+            } as Form
+            setForm(form)
+            setFormName(form?.name)
+            setQuestion({})
         }
 
     }, [params])
 
     return (
         <Container>
-            {responseData ? (
-
+            {form ? (
                 <div>
                     <div className="flex justify-end">
                         <Button label="Save" icon="pi pi-check" loading={loading} onClick={save}/>
@@ -91,39 +111,55 @@ export function FormDetail() {
                         <InputText value={formName}
                                    onChange={(e) => setFormName(e.target.value)}
                                    className="w-full"
-                                   placeholder="Form title"></InputText>
+                                   placeholder="Please, fill your form name"></InputText>
                     </div>
-                    {Object.entries(responseData.data.fields).map(([key, fieldAny]) => {
+                    {Object.entries(form.fields).map(([key, fieldAny]) => {
                         const field = (fieldAny as Field)
                         switch (field.type) {
                             case 'text':
                                 return <div key={key}
                                             className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
                                     <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full" value={field.question} placeholder="Question"></InputText>
-                                    <InputText className="w-full" placeholder="Input Text" type="text"></InputText>
+                                    <InputText className="w-full"
+                                               value={question[key]}
+                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
+                                               placeholder="Please, fill your question"></InputText>
+                                    <div className="flex gap-3 w-full">
+                                        <InputText className="w-3/5" placeholder="Input Text" type="text"></InputText>
+                                        {/*<Checkbox checked={field.required} onChange={(e) => field.required = !!e.checked}/> <span>Is required?</span>*/}
+                                    </div>
+
                                 </div>
                             case 'datetime':
                                 return <div key={key}
-                                             className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
+                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
                                     <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full" placeholder={field.question}></InputText>
+                                    <InputText className="w-full"
+                                               value={question[key]}
+                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
+                                               placeholder="Please, fill your question"></InputText>
                                     <Calendar className="w-full" placeholder="Datetime" value={datetime24h} showTime
                                               showIcon hourFormat="24"/>
                                 </div>
                             case 'number':
                                 return <div key={key}
-                                             className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
+                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
                                     <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full" placeholder={field.question}></InputText>
+                                    <InputText className="w-full"
+                                               value={question[key]}
+                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
+                                               placeholder="Please, fill your question"></InputText>
                                     <InputNumber className="w-full" placeholder="Number" showButtons
                                                  mode="decimal"></InputNumber>
                                 </div>
                             case 'boolean':
                                 return <div key={key}
-                                             className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
+                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
                                     <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full" placeholder={field.question}></InputText>
+                                    <InputText className="w-full"
+                                               value={question[key]}
+                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
+                                               placeholder="Please, fill your question"></InputText>
                                     <div className="flex align-items-center">
                                         <Checkbox checked={true}/>
                                         <label className="ml-2">Boolean</label>
@@ -131,9 +167,12 @@ export function FormDetail() {
                                 </div>
                             case 'rating':
                                 return <div key={key}
-                                             className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
+                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
                                     <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full" placeholder={field.question}></InputText>
+                                    <InputText className="w-full"
+                                               value={question[key]}
+                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
+                                               placeholder="Please, fill your question"></InputText>
                                     <Rating className="w-full"/>
                                 </div>
 

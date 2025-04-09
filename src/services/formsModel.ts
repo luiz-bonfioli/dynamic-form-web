@@ -1,9 +1,9 @@
-export interface ResponseData {
+export interface FormListResponse {
     statusCode: string
     data: Form[]
 }
 
-export interface ResponseDataSingle {
+export interface FormResponse {
     statusCode: string
     data: Form
 }
