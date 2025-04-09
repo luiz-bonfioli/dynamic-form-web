@@ -1,49 +1,101 @@
-import React, {useEffect, useState} from "react";
-import Container from "../layout/Container";
-import {createForm, fetchById} from "../services/formsService";
-import {Field, FieldType, Form} from "../services/formsModel";
-import {useParams} from "react-router-dom";
-import {InputText} from "primereact/inputtext";
-import {Calendar} from "primereact/calendar";
-import {InputNumber} from "primereact/inputnumber";
-import {Button} from "primereact/button";
-import styles from '../layout/layout.module.css';
-import {Dialog} from "primereact/dialog";
-import {Rating} from "primereact/rating";
-import {Checkbox} from "primereact/checkbox";
-import {ZIndexUtils} from "primereact/utils";
-import set = ZIndexUtils.set;
-
+import React, {useEffect, useState} from "react"
+import Container from "../layout/Container"
+import {createForm, fetchById} from "../services/formsService"
+import {Field, FieldType, Form} from "../services/formsModel"
+import {useParams} from "react-router-dom"
+import {InputText} from "primereact/inputtext"
+import {Calendar} from "primereact/calendar"
+import {InputNumber} from "primereact/inputnumber"
+import {Button} from "primereact/button"
+import styles from '../layout/layout.module.css'
+import {Dialog} from "primereact/dialog"
+import {Rating} from "primereact/rating"
+import {Checkbox} from "primereact/checkbox"
 
 export function FormDetail() {
 
     const params = useParams<{ id: string }>()
-    const [form, setForm] = useState<Form>()
-    const [datetime24h, setDateTime24h] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [componentDialogVisible, setComponentDialogVisible] = useState(false)
+
+    const [form, setForm] = useState<Form>()
     const [fieldIndex, setFieldIndex] = useState(1)
-    const [visible, setVisible] = useState(false)
     const [formName, setFormName] = useState('')
     const [question, setQuestion] = useState<Record<string, any>>({})
-
-
-    function onQuestionChanged(key: string, value: string) {
-        const deepClone = JSON.parse(JSON.stringify(question));
-        deepClone[key] = value
-        setQuestion(deepClone)
-    }
+    const [required, setRequired] = useState<Record<string, any>>({})
 
     const headerElement = (
         <span className="layout-menuitem-text">Select the component</span>
     )
 
+    const renderFieldByKey = (key: string, inputElement: React.ReactNode) => {
+        return (
+            <div key={key} className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
+                <h3 className="font-bold">Question</h3>
+                <InputText
+                    className="w-full"
+                    value={question[key]}
+                    onChange={(e) => onQuestionChanged(key, e.target.value)}
+                    placeholder="Please, fill your question"
+                />
+                <div className="flex gap-3 w-full">
+                    {inputElement}
+                    <Checkbox
+                        checked={required[key]}
+                        onChange={(e) => onRequiredChanged(key, !!e.checked)}
+                    />
+                    <span>Is required?</span>
+                </div>
+            </div>
+        )
+    }
+
+    const renderField = (key: string, field: Field) => {
+        switch (field.type) {
+            case 'text':
+                return renderFieldByKey(key, <InputText className="w-3/5" placeholder="Input Text" type="text"/>)
+            case 'datetime':
+                return renderFieldByKey(key, <Calendar className="w-full" placeholder="Datetime" showTime showIcon
+                                                       hourFormat="24"/>)
+            case 'number':
+                return renderFieldByKey(key, <InputNumber className="w-full" placeholder="Number" showButtons
+                                                          mode="decimal"/>)
+            case 'boolean':
+                return renderFieldByKey(key, <div className="flex align-items-center">
+                    <Checkbox checked={true}/>
+                    <label className="ml-2">Boolean</label>
+                </div>)
+            case 'rating':
+                return renderFieldByKey(key, <Rating className="w-full"/>)
+            default:
+                return <div key={key}>Unknown Field Type: {key}</div>
+        }
+    }
+
+
+    const onQuestionChanged = (key: string, value: string) => {
+        const deepClone = JSON.parse(JSON.stringify(question))
+        deepClone[key] = value
+        setQuestion(deepClone)
+    }
+
+    const onRequiredChanged = (key: string, value: boolean) => {
+        const deepClone = JSON.parse(JSON.stringify(required))
+        deepClone[key] = value
+        setRequired(deepClone)
+    }
+
     const save = () => {
-        setLoading(true);
+        setLoading(true)
         if (form) {
             form.name = formName
 
             Object.entries(question).map(([key, question]) => {
                 form.fields[key].question = question
+            })
+
+            Object.entries(required).map(([key, required]) => {
+                form.fields[key].required = required
             })
 
             createForm(form).then(r => {
@@ -53,7 +105,7 @@ export function FormDetail() {
     }
 
     const addNewComponent = (component: string) => {
-        setVisible(false)
+        setComponentDialogVisible(false)
         if (form?.fields) {
             form.fields["field-" + fieldIndex] = {
                 type: component as FieldType,
@@ -62,39 +114,43 @@ export function FormDetail() {
             }
             setFieldIndex(Object.keys(form.fields).length + 1)
         } else {
-            console.warn("Response data or fields are not available.");
+            console.warn("Response data or fields are not available.")
         }
+    }
+
+    const setNewForm = () => {
+        let form = {
+            id: "",
+            name: "",
+            fields: {}
+        } as Form
+        setForm(form)
+        setFormName(form?.name)
+        setQuestion({})
+    }
+
+    const setLoadedForm = (item: Form) => {
+        setFormName(item?.name)
+        setFieldIndex(Object.keys(item.fields).length + 1)
+
+        Object.keys(item.fields).map((key) => {
+            question[key] = item.fields[key].question
+        })
+
+        Object.keys(item.fields).map((key) => {
+            required[key] = item.fields[key].required
+        })
+
+        setForm(item)
     }
 
     useEffect(() => {
         if (params.id) {
             fetchById(params.id)
-                .then((item) => {
-                    console.log(item);
-
-                    setFormName(item?.name)
-                    setFieldIndex(Object.keys(item.fields).length + 1)
-
-                    Object.entries(item.fields).map(([key, fieldAny]) => {
-                        question[key] = item.fields[key].question
-                    })
-
-                    setForm(item)
-                    console.log("xxx" + question)
-
-                })
-                .catch(err => {
-                    console.log(err);
-                })
+                .then((item) => setLoadedForm(item))
+                .catch(err => console.log(err))
         } else {
-            let form = {
-                id: "",
-                name: "",
-                fields: {}
-            } as Form
-            setForm(form)
-            setFormName(form?.name)
-            setQuestion({})
+            setNewForm()
         }
 
     }, [params])
@@ -113,82 +169,17 @@ export function FormDetail() {
                                    className="w-full"
                                    placeholder="Please, fill your form name"></InputText>
                     </div>
-                    {Object.entries(form.fields).map(([key, fieldAny]) => {
-                        const field = (fieldAny as Field)
-                        switch (field.type) {
-                            case 'text':
-                                return <div key={key}
-                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
-                                    <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full"
-                                               value={question[key]}
-                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
-                                               placeholder="Please, fill your question"></InputText>
-                                    <div className="flex gap-3 w-full">
-                                        <InputText className="w-3/5" placeholder="Input Text" type="text"></InputText>
-                                        {/*<Checkbox checked={field.required} onChange={(e) => field.required = !!e.checked}/> <span>Is required?</span>*/}
-                                    </div>
 
-                                </div>
-                            case 'datetime':
-                                return <div key={key}
-                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
-                                    <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full"
-                                               value={question[key]}
-                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
-                                               placeholder="Please, fill your question"></InputText>
-                                    <Calendar className="w-full" placeholder="Datetime" value={datetime24h} showTime
-                                              showIcon hourFormat="24"/>
-                                </div>
-                            case 'number':
-                                return <div key={key}
-                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
-                                    <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full"
-                                               value={question[key]}
-                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
-                                               placeholder="Please, fill your question"></InputText>
-                                    <InputNumber className="w-full" placeholder="Number" showButtons
-                                                 mode="decimal"></InputNumber>
-                                </div>
-                            case 'boolean':
-                                return <div key={key}
-                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
-                                    <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full"
-                                               value={question[key]}
-                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
-                                               placeholder="Please, fill your question"></InputText>
-                                    <div className="flex align-items-center">
-                                        <Checkbox checked={true}/>
-                                        <label className="ml-2">Boolean</label>
-                                    </div>
-                                </div>
-                            case 'rating':
-                                return <div key={key}
-                                            className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
-                                    <h3 className="font-bold">Question</h3>
-                                    <InputText className="w-full"
-                                               value={question[key]}
-                                               onChange={(e) => onQuestionChanged(key, e.target.value)}
-                                               placeholder="Please, fill your question"></InputText>
-                                    <Rating className="w-full"/>
-                                </div>
+                    {Object.entries(form.fields).map(([key, field]) => renderField(key, field as Field))}
 
-                            default:
-                                return <div key={key}>Unknown Field Type: {key}</div>;
-                        }
-                    })}
-
-                    <div className={styles.dottedGrayBorder} onClick={() => setVisible(true)}>
+                    <div className={styles.dottedGrayBorder} onClick={() => setComponentDialogVisible(true)}>
                         <span><i className="layout-menuitem-icon pi pi-fw pi-plus"></i>Add new component</span>
                     </div>
 
-                    <Dialog visible={visible} modal header={headerElement}
+                    <Dialog visible={componentDialogVisible} modal header={headerElement}
                             style={{width: '50rem'}} onHide={() => {
-                        if (!visible) return;
-                        setVisible(false);
+                        if (!componentDialogVisible) return
+                        setComponentDialogVisible(false)
                     }}>
 
                         <div className="grid grid-cols-1 gap-4">
@@ -223,9 +214,7 @@ export function FormDetail() {
                 </div>
             ) : ('Loading...')}
 
-
         </Container>
-
     )
 }
 
