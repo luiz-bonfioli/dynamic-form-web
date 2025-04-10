@@ -20,6 +20,18 @@ export interface Field {
     required: boolean
 }
 
+export interface SourceData {
+    id?: string
+    question: string
+    answer: string
+}
+
+export interface SourceRecord {
+    id?: string
+    formId: string
+    sourceData: SourceData[]
+}
+
 export enum FieldType {
     TEXT = 'text',
     DATETIME = 'datetime',

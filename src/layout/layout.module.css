@@ -81,6 +81,32 @@ body {
     }
 }
 
+.formCard {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    min-height: 150px;
+    min-width: 20rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cardTitle {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: auto;
+}
+
+.cardButtons {
+    display: flex;
+    gap: 0.5rem;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
 .dottedGrayBorder {
     border: 2px dashed #F3F3F3;
     padding: 10px;

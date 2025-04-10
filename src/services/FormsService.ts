@@ -1,4 +1,4 @@
-import {Form, FormListResponse, FormResponse} from "./formsModel"
+import {Form, FormListResponse, FormResponse} from "../models/FormModels";
 
 const BASE_URL = 'http://127.0.0.1:8080/form'
 

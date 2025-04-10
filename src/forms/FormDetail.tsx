@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react"
 import Container from "../layout/Container"
-import {createForm, fetchById} from "../services/formsService"
-import {Field, FieldType, Form} from "../services/formsModel"
+import {createForm, fetchById} from "../services/FormsService"
 import {useParams} from "react-router-dom"
 import {InputText} from "primereact/inputtext"
 import {Calendar} from "primereact/calendar"
@@ -11,6 +10,7 @@ import styles from '../layout/layout.module.css'
 import {Dialog} from "primereact/dialog"
 import {Rating} from "primereact/rating"
 import {Checkbox} from "primereact/checkbox"
+import {Field, FieldType, Form} from "../models/FormModels";
 
 export function FormDetail() {
 
