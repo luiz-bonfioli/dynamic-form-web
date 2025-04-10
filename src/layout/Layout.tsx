@@ -31,12 +31,12 @@ export function Layout() {
             <div className={styles.layoutWrapper}>
                 <Routes>
                     <Route path='/' element={<Container>Welcome to Dynamic Forms!</Container>}/>
-                    <Route path='/forms' element={<Forms/>}/>
+                    <Route path='/forms' element={<Forms onSuccess={showSuccess} onError={showError}/>}/>
                     <Route path='/forms/:id/builder'
                            element={<FormDetail onSuccess={showSuccess} onError={showError}/>}/>
                     <Route path='/forms/builder' element={<FormDetail onSuccess={showSuccess} onError={showError}/>}/>
                     <Route path='/forms/:id/fill' element={<FormFill onSuccess={showSuccess} onError={showError}/>}/>
-                    <Route path='/forms/:id/data' element={<FormData/>}/>
+                    <Route path='/forms/:id/data' element={<FormData onSuccess={showSuccess} onError={showError}/>}/>
                 </Routes>
                 <Topbar title="Dynamic Forms"/>
                 <Sidebar>

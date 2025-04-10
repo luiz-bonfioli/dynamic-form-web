@@ -4,9 +4,14 @@ import {useParams} from "react-router-dom"
 import {fetchByFormId} from "../services/SourceService"
 import {DataTable} from "primereact/datatable"
 import {Column} from "primereact/column"
-import {fetchById} from "../services/FormsService";
+import {fetchById} from "../services/FormsService"
 
-export function FormData() {
+type FormDataProps = {
+    onSuccess: (message: string) => void
+    onError: (error: string) => void
+}
+
+export function FormData({onError}: FormDataProps) {
 
     const params = useParams<{ id: string }>()
     const [sourceData, setSourceData] = useState<Record<string, string>[]>([])
@@ -23,6 +28,9 @@ export function FormData() {
         if (params.id) {
             fetchById(params.id).then((form) => {
                 setFormName(form.name)
+            }).catch(err => {
+                console.log(err)
+                onError("Something went wrong. Please try again later.")
             })
 
             fetchByFormId(params.id)
@@ -46,7 +54,10 @@ export function FormData() {
                         setColumns(columnsArray)
                         setSourceData(sourceDataArray)
                     }
-                ).catch(err => console.log(err))
+                ).catch(err => {
+                console.log(err)
+                onError("Something went wrong. Please try again later.")
+            })
         }
     }, [params])
 

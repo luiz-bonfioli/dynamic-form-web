@@ -6,7 +6,12 @@ import {Button} from "primereact/button"
 import {Form} from "../models/FormModels"
 import {fetchAll} from "../services/FormsService"
 
-export function Forms() {
+type FormsProps = {
+    onSuccess: (message: string) => void
+    onError: (error: string) => void
+}
+
+export function Forms({onError}: FormsProps) {
 
     const [forms, setForms] = useState<Form[]>()
     const navigate = useNavigate()
@@ -16,6 +21,7 @@ export function Forms() {
             .then(setForms)
             .catch(err => {
                 console.log(err)
+                onError("Something went wrong. Please try again later.")
             })
     }, [])
 
@@ -56,13 +62,14 @@ export function Forms() {
                             <div className={styles.cardTitle}>{item.name}</div>
 
                             <div className={styles.cardButtons}>
-                                <Button icon="pi pi-clone" severity="secondary" tooltip="Clone your form. Edit is allowed."
+                                <Button icon="pi pi-clone" severity="secondary"
+                                        tooltip="Clone your form. Edit is allowed."
                                         tooltipOptions={{position: 'left'}} rounded
                                         onClick={() => handleBuildClick(item)}/>
                                 <Button icon="pi pi-file-plus" severity="secondary" tooltip="Fill out your form."
                                         tooltipOptions={{position: 'top'}} rounded
                                         onClick={() => handleFillClick(item)}/>
-                                <Button icon="pi pi-database"  tooltip="See your forms data."
+                                <Button icon="pi pi-database" tooltip="See your forms data."
                                         tooltipOptions={{position: 'right'}} rounded
                                         onClick={() => handleDataClick(item)}/>
                             </div>
