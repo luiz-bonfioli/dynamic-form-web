@@ -99,11 +99,34 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
     const save = () => {
         setLoading(true)
         if (form) {
-            form.name = formName
+            if (!formName || formName.trim() === "") {
+                onError("Please, enter a valid form name.")
+                setLoading(false)
+                return
+            }
 
+            if (Object.keys(form.fields).length === 0) {
+                onError("Please, the form should have at least one component.")
+                setLoading(false)
+                return
+            }
+
+            form.name = formName
             Object.entries(question).map(([key, question]) => {
                 form.fields[key].question = question
             })
+
+            let isAnyQuestionEmpty = false
+            Object.entries(form.fields).forEach(([key, value]) => {
+                if (!isAnyQuestionEmpty && form.fields[key].question.trim() === "") {
+                    isAnyQuestionEmpty = true
+                }
+            })
+            if (isAnyQuestionEmpty) {
+                onError("Please, enter a valid question.")
+                setLoading(false)
+                return
+            }
 
             Object.entries(required).map(([key, required]) => {
                 form.fields[key].required = required

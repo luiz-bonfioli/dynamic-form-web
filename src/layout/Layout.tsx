@@ -30,7 +30,7 @@ export function Layout() {
             <Toast ref={toast}/>
             <div className={styles.layoutWrapper}>
                 <Routes>
-                    <Route path='/' element={<Container>Welcome to Dynamic Forms</Container>}/>
+                    <Route path='/' element={<Container>Welcome to Dynamic Forms!</Container>}/>
                     <Route path='/forms' element={<Forms/>}/>
                     <Route path='/forms/:id/builder'
                            element={<FormDetail onSuccess={showSuccess} onError={showError}/>}/>
