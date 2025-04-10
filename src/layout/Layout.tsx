@@ -7,6 +7,7 @@ import Container from "./Container";
 import {Forms} from "../forms/Forms";
 import {FormDetail} from "../forms/FormDetail";
 import {FormFill} from "../forms/FormFill";
+import {FormData} from "../forms/FormData";
 
 
 export function Layout() {
@@ -19,6 +20,7 @@ export function Layout() {
                     <Route path='/forms/:id/builder' element={<FormDetail/>}/>
                     <Route path='/forms/builder' element={<FormDetail/>}/>
                     <Route path='/forms/:id/fill' element={<FormFill/>}/>
+                    <Route path='/forms/:id/data' element={<FormData/>}/>
                 </Routes>
                 <Topbar title="Dynamic Forms"/>
                 <Sidebar>

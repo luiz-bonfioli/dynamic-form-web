@@ -56,13 +56,13 @@ export function Forms() {
                             <div className={styles.cardTitle}>{item.name}</div>
 
                             <div className={styles.cardButtons}>
-                                <Button icon="pi pi-wrench" severity="secondary" tooltip="Edit your form"
+                                <Button icon="pi pi-clone" severity="secondary" tooltip="Clone your form. Edit is allowed."
                                         tooltipOptions={{position: 'left'}} rounded
                                         onClick={() => handleBuildClick(item)}/>
-                                <Button icon="pi pi-file-plus" severity="secondary" tooltip="Fill out your form"
+                                <Button icon="pi pi-file-plus" severity="secondary" tooltip="Fill out your form."
                                         tooltipOptions={{position: 'top'}} rounded
                                         onClick={() => handleFillClick(item)}/>
-                                <Button icon="pi pi-database" severity="secondary" tooltip="See your forms data"
+                                <Button icon="pi pi-database" severity="secondary" tooltip="See your forms data."
                                         tooltipOptions={{position: 'right'}} rounded
                                         onClick={() => handleDataClick(item)}/>
                             </div>

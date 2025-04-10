@@ -3,6 +3,11 @@ export interface FormListResponse {
     data: Form[]
 }
 
+export interface SourceRecordListResponse {
+    statusCode: string
+    data: SourceRecord[]
+}
+
 export interface FormResponse {
     statusCode: string
     data: Form

@@ -66,7 +66,7 @@ export function FormDetail() {
                     <label className="ml-2">Boolean</label>
                 </div>)
             case 'rating':
-                return renderFieldByKey(key, <Rating className="w-3/5"/>)
+                return renderFieldByKey(key, <Rating className="w-3/5" cancel={false}/>)
             default:
                 return <div key={key}>Unknown Field Type: {key}</div>
         }
@@ -74,15 +74,17 @@ export function FormDetail() {
 
 
     const onQuestionChanged = (key: string, value: string) => {
-        const deepClone = JSON.parse(JSON.stringify(question))
-        deepClone[key] = value
-        setQuestion(deepClone)
+        setQuestion(prev => ({
+            ...prev,
+            [key]: value
+        }))
     }
 
     const onRequiredChanged = (key: string, value: boolean) => {
-        const deepClone = JSON.parse(JSON.stringify(required))
-        deepClone[key] = value
-        setRequired(deepClone)
+        setRequired(prev => ({
+            ...prev,
+            [key]: value
+        }))
     }
 
     const save = () => {

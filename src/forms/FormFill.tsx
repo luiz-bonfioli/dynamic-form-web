@@ -9,7 +9,7 @@ import {Button} from "primereact/button"
 import styles from '../layout/layout.module.css'
 import {Rating} from "primereact/rating"
 import {Checkbox} from "primereact/checkbox"
-import {Field, Form, SourceData, SourceRecord} from "../models/FormModels";
+import {Field, Form, SourceRecord} from "../models/FormModels";
 import {createSourceRecord} from "../services/SourceService";
 
 export function FormFill() {
@@ -25,7 +25,7 @@ export function FormFill() {
 
     const renderField = (key: string, inputElement: React.ReactNode) => {
         return (
-            <div key={key} className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
+            <div key={key} className={`${styles.question} flex flex-col items-start gap-3`}>
                 <h3 className="font-bold">
                     {question[key]}
                     {required[key] && <span> *</span>}
@@ -61,16 +61,19 @@ export function FormFill() {
                     <label className="ml-2">Boolean</label>
                 </div>)
             case 'rating':
-                return renderField(key, <Rating className="w-full"/>)
+                return renderField(key, <Rating className="w-full" cancel={false}
+                                                value={answer[key]}
+                                                onChange={(e) => onAnswerChanged(key, e.value)}/>)
             default:
                 return <div key={key}>Unknown Field Type: {key}</div>
         }
     }
 
     const onAnswerChanged = (key: string, value: any) => {
-        const deepClone = JSON.parse(JSON.stringify(answer))
-        deepClone[key] = value
-        setAnswer(deepClone)
+        setAnswer(prev => ({
+            ...prev,
+            [key]: value
+        }))
     }
     const save = () => {
         setLoading(true)
@@ -81,7 +84,7 @@ export function FormFill() {
             }
 
             Object.entries(answer).map(([key, value]) => {
-                const sourceData = {answer: value, question: question[key]}
+                const sourceData = {answer: typeConverter(value), question: question[key]}
                 sourceRecord.sourceData.push(sourceData)
             })
             console.log(sourceRecord)
@@ -90,6 +93,23 @@ export function FormFill() {
                 setLoading(false)
             }).finally(() => setLoading(false))
         }
+    }
+
+    const typeConverter = (value: any) => {
+        let answer: string
+
+        if (typeof value === 'string') {
+            answer = value
+        } else if (value instanceof Date) {
+            answer = value.toISOString()
+        } else if (typeof value === 'number') {
+            answer = String(value)
+        } else if (typeof value === 'boolean') {
+            answer = value ? "Yes" : "No"
+        } else {
+            answer = JSON.stringify(value)
+        }
+        return answer
     }
 
 
