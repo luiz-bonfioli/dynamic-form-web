@@ -35,29 +35,32 @@ export function FormData({onError}: FormDataProps) {
 
             fetchByFormId(params.id)
                 .then((item) => {
-                        const columnsArray = item[0].sourceData.map((sourceData) => ({
-                            id: sourceData.id ? sourceData.id : "",
-                            field: sourceData.question,
-                            header: sourceData.question
-                        }))
+                        if (item.length > 0) {
+                            const columnsArray = item[0].sourceData.map((sourceData) => ({
+                                id: sourceData.id ? sourceData.id : "",
+                                field: sourceData.question,
+                                header: sourceData.question
+                            }))
 
-                        const sourceDataArray: Record<string, string>[] = []
-                        item.forEach(record => {
-                            const row: Record<string, string> = {}
-                            record.sourceData.forEach(sourceData => {
-                                const key = sourceData.question
-                                row[key] = sourceData.answer
+                            const sourceDataArray: Record<string, string>[] = []
+                            item.forEach(record => {
+                                const row: Record<string, string> = {}
+                                record.sourceData.forEach(sourceData => {
+                                    const key = sourceData.question
+                                    row[key] = sourceData.answer
 
+                                })
+                                sourceDataArray.push(row)
                             })
-                            sourceDataArray.push(row)
-                        })
-                        setColumns(columnsArray)
-                        setSourceData(sourceDataArray)
+                            setColumns(columnsArray)
+                            setSourceData(sourceDataArray)
+                        }
                     }
-                ).catch(err => {
-                console.log(err)
-                onError("Something went wrong. Please try again later.")
-            })
+                )
+                .catch(err => {
+                    console.log(err)
+                    onError("Something went wrong. Please try again later.")
+                })
         }
     }, [params])
 
