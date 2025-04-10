@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react"
 import Container from "../layout/Container"
 import {createForm, fetchById} from "../services/FormsService"
-import {useParams} from "react-router-dom"
+import {useNavigate, useParams} from "react-router-dom"
 import {InputText} from "primereact/inputtext"
 import {Calendar} from "primereact/calendar"
 import {InputNumber} from "primereact/inputnumber"
@@ -12,9 +12,16 @@ import {Rating} from "primereact/rating"
 import {Checkbox} from "primereact/checkbox"
 import {Field, FieldType, Form} from "../models/FormModels";
 
-export function FormDetail() {
+type FormDetailProps = {
+    onSuccess: (message: string) => void
+    onError: (error: string) => void
+}
+
+export function FormDetail({onSuccess, onError}: FormDetailProps) {
 
     const params = useParams<{ id: string }>()
+    const navigate = useNavigate()
+
     const [loading, setLoading] = useState(false)
     const [componentDialogVisible, setComponentDialogVisible] = useState(false)
 
@@ -24,9 +31,11 @@ export function FormDetail() {
     const [question, setQuestion] = useState<Record<string, any>>({})
     const [required, setRequired] = useState<Record<string, any>>({})
 
+
     const headerElement = (
         <span className="layout-menuitem-text">Select the component</span>
     )
+
 
     const renderFieldByKey = (key: string, inputElement: React.ReactNode) => {
         return (
@@ -102,6 +111,11 @@ export function FormDetail() {
 
             createForm(form).then(r => {
                 setLoading(false)
+                onSuccess("Form saved successfully.")
+                navigate("/forms/")
+            }).catch(err => {
+                console.log(err)
+                onError("Something went wrong. Please try again later.")
             })
         }
     }
@@ -159,6 +173,8 @@ export function FormDetail() {
 
     return (
         <Container>
+
+
             {form ? (
                 <div>
                     <div className="flex justify-end">

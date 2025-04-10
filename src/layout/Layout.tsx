@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import Topbar from "./Topbar";
 import Sidebar from "./Sidebar";
 import styles from "./layout.module.css";
@@ -8,18 +8,34 @@ import {Forms} from "../forms/Forms";
 import {FormDetail} from "../forms/FormDetail";
 import {FormFill} from "../forms/FormFill";
 import {FormData} from "../forms/FormData";
+import {Toast} from "primereact/toast";
 
 
 export function Layout() {
+
+    const toast = useRef(null);
+
+    const showSuccess = (message: string) => {
+        // @ts-ignore
+        toast.current.show({severity: 'success', summary: 'Success', detail: message, life: 3000});
+    }
+
+    const showError = (message: string) => {
+        // @ts-ignore
+        toast.current.show({severity: 'error', summary: 'Error', detail: message, life: 3000});
+    }
+
     return (
         <>
+            <Toast ref={toast}/>
             <div className={styles.layoutWrapper}>
                 <Routes>
                     <Route path='/' element={<Container>Welcome to Dynamic Forms</Container>}/>
                     <Route path='/forms' element={<Forms/>}/>
-                    <Route path='/forms/:id/builder' element={<FormDetail/>}/>
-                    <Route path='/forms/builder' element={<FormDetail/>}/>
-                    <Route path='/forms/:id/fill' element={<FormFill/>}/>
+                    <Route path='/forms/:id/builder'
+                           element={<FormDetail onSuccess={showSuccess} onError={showError}/>}/>
+                    <Route path='/forms/builder' element={<FormDetail onSuccess={showSuccess} onError={showError}/>}/>
+                    <Route path='/forms/:id/fill' element={<FormFill onSuccess={showSuccess} onError={showError}/>}/>
                     <Route path='/forms/:id/data' element={<FormData/>}/>
                 </Routes>
                 <Topbar title="Dynamic Forms"/>

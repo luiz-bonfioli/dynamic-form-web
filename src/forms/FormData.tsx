@@ -4,15 +4,27 @@ import {useParams} from "react-router-dom"
 import {fetchByFormId} from "../services/SourceService"
 import {DataTable} from "primereact/datatable"
 import {Column} from "primereact/column"
+import {fetchById} from "../services/FormsService";
 
 export function FormData() {
 
     const params = useParams<{ id: string }>()
     const [sourceData, setSourceData] = useState<Record<string, string>[]>([])
     const [columns, setColumns] = useState<{ id: string, field: string, header: string }[]>([])
+    const [formName, setFormName] = useState("")
+
+    const header = (
+        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+            <span className="text-xl text-900 font-bold">{formName}</span>
+        </div>
+    )
 
     useEffect(() => {
         if (params.id) {
+            fetchById(params.id).then((form) => {
+                setFormName(form.name)
+            })
+
             fetchByFormId(params.id)
                 .then((item) => {
                         const columnsArray = item[0].sourceData.map((sourceData) => ({
@@ -41,7 +53,7 @@ export function FormData() {
     return (
         <Container>
             {columns ? (
-                <DataTable value={sourceData} tableStyle={{minWidth: '50rem'}}>
+                <DataTable header={header} value={sourceData} tableStyle={{minWidth: '50rem'}}>
                     {columns.map((col, i) => (
                         <Column key={col.id} field={col.field} header={col.header}/>
                     ))}

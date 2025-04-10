@@ -62,7 +62,7 @@ export function Forms() {
                                 <Button icon="pi pi-file-plus" severity="secondary" tooltip="Fill out your form."
                                         tooltipOptions={{position: 'top'}} rounded
                                         onClick={() => handleFillClick(item)}/>
-                                <Button icon="pi pi-database" severity="secondary" tooltip="See your forms data."
+                                <Button icon="pi pi-database"  tooltip="See your forms data."
                                         tooltipOptions={{position: 'right'}} rounded
                                         onClick={() => handleDataClick(item)}/>
                             </div>

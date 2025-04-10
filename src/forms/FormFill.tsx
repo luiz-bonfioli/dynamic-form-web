@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react"
 import Container from "../layout/Container"
 import {fetchById} from "../services/FormsService"
-import {useParams} from "react-router-dom"
+import {useNavigate, useParams} from "react-router-dom"
 import {InputText} from "primereact/inputtext"
 import {Calendar} from "primereact/calendar"
 import {InputNumber} from "primereact/inputnumber"
@@ -12,10 +12,16 @@ import {Checkbox} from "primereact/checkbox"
 import {Field, Form, SourceRecord} from "../models/FormModels";
 import {createSourceRecord} from "../services/SourceService";
 
-export function FormFill() {
+type FormFillProps = {
+    onSuccess: (message: string) => void
+    onError: (error: string) => void
+}
+
+export function FormFill({onSuccess, onError}: FormFillProps) {
 
     const params = useParams<{ id: string }>()
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
 
     const [form, setForm] = useState<Form>()
     const [formName, setFormName] = useState('')
@@ -91,6 +97,11 @@ export function FormFill() {
 
             createSourceRecord(sourceRecord).then(r => {
                 setLoading(false)
+                onSuccess("Record saved successfully.")
+                navigate(`/forms/${form.id}/data`)
+            }).catch(err => {
+                console.log(err)
+                onError("Something went wrong. Please try again later.")
             }).finally(() => setLoading(false))
         }
     }
@@ -111,7 +122,6 @@ export function FormFill() {
         }
         return answer
     }
-
 
     const setLoadedForm = (item: Form) => {
         setFormName(item?.name)
