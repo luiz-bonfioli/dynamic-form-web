@@ -11,32 +11,37 @@ type FormsProps = {
     onError: (error: string) => void
 }
 
+// This component lists all forms and actions for each one
 export function Forms({onError}: FormsProps) {
 
     const [forms, setForms] = useState<Form[]>()
     const navigate = useNavigate()
 
+    // Fetches all forms from the backend when the component mounts
     useEffect(() => {
         fetchAll()
             .then(setForms)
             .catch(err => {
-                console.log(err)
                 onError("Something went wrong. Please try again later.")
             })
     }, [])
 
+    // Navigates to the form builder page (used to edit or clone a form)
     const handleBuildClick = (item: Form) => {
         navigate(`/forms/${item.id}/builder`)
     }
 
+    // Navigates to the form data page (view collected answers)
     const handleDataClick = (item: Form) => {
         navigate(`/forms/${item.id}/data`)
     }
 
+    // Navigates to the form fill page (fill out the form as a user)
     const handleFillClick = (item: Form) => {
         navigate(`/forms/${item.id}/fill`)
     }
 
+    // Navigates to the page to create a new form
     const handleNewClick = () => {
         navigate(`/forms/builder`)
     }

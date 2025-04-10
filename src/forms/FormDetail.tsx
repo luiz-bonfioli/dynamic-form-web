@@ -17,26 +17,27 @@ type FormDetailProps = {
     onError: (error: string) => void
 }
 
+// This component allows to build a dynamic form
 export function FormDetail({onSuccess, onError}: FormDetailProps) {
 
     const params = useParams<{ id: string }>()
     const navigate = useNavigate()
 
+    // State declarations
     const [loading, setLoading] = useState(false)
     const [componentDialogVisible, setComponentDialogVisible] = useState(false)
-
     const [form, setForm] = useState<Form>()
     const [fieldIndex, setFieldIndex] = useState(1)
     const [formName, setFormName] = useState('')
     const [question, setQuestion] = useState<Record<string, any>>({})
     const [required, setRequired] = useState<Record<string, any>>({})
 
-
+    // Component Selector header - Dialog
     const headerElement = (
         <span className="layout-menuitem-text">Select the component</span>
     )
 
-
+    // Helper to render each field with its associated question input and "required" checkbox
     const renderFieldByKey = (key: string, inputElement: React.ReactNode) => {
         return (
             <div key={key} className={`${styles.dottedGrayBorder} flex flex-col items-start gap-3`}>
@@ -59,6 +60,7 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
         )
     }
 
+    // Render the input field according to its type
     const renderField = (key: string, field: Field) => {
         switch (field.type) {
             case 'text':
@@ -82,6 +84,7 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
     }
 
 
+    // Handle when a question text is edited
     const onQuestionChanged = (key: string, value: string) => {
         setQuestion(prev => ({
             ...prev,
@@ -89,6 +92,7 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
         }))
     }
 
+    // Handle when the "required" checkbox is toggled
     const onRequiredChanged = (key: string, value: boolean) => {
         setRequired(prev => ({
             ...prev,
@@ -96,6 +100,7 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
         }))
     }
 
+    // Save the form after validation
     const save = () => {
         setLoading(true)
         if (form) {
@@ -143,6 +148,7 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
         }
     }
 
+    // Add a new component to the form
     const addNewComponent = (component: string) => {
         setComponentDialogVisible(false)
         if (form?.fields) {
@@ -157,6 +163,7 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
         }
     }
 
+    // Set up a new empty form
     const setNewForm = () => {
         let form = {
             id: "",
@@ -168,6 +175,7 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
         setQuestion({})
     }
 
+    // Load an existing form and initialize states
     const setLoadedForm = (item: Form) => {
         setFormName(item?.name)
         setFieldIndex(Object.keys(item.fields).length + 1)
@@ -183,6 +191,7 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
         setForm(item)
     }
 
+    // Load form data from api or set a new one on component mount
     useEffect(() => {
         if (params.id) {
             fetchById(params.id)

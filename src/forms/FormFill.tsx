@@ -17,18 +17,21 @@ type FormFillProps = {
     onError: (error: string) => void
 }
 
+// This is the component responsible to render a dynamic form and allow users to fill in the fields
 export function FormFill({onSuccess, onError}: FormFillProps) {
 
     const params = useParams<{ id: string }>()
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
+    // State declarations
     const [form, setForm] = useState<Form>()
     const [formName, setFormName] = useState('')
     const [answer, setAnswer] = useState<Record<string, any>>({})
     const [question, setQuestion] = useState<Record<string, any>>({})
     const [required, setRequired] = useState<Record<string, boolean>>({})
 
+    // Helper to render a labeled field
     const renderField = (key: string, inputElement: React.ReactNode) => {
         return (
             <div key={key} className={`${styles.question} flex flex-col items-start gap-3`}>
@@ -43,6 +46,7 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
         )
     }
 
+    // Render input component based on field type
     const renderFieldByType = (key: string, field: Field) => {
         switch (field.type) {
             case 'text':
@@ -75,12 +79,15 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
         }
     }
 
+    // Handle answer input changes
     const onAnswerChanged = (key: string, value: any) => {
         setAnswer(prev => ({
             ...prev,
             [key]: value
         }))
     }
+
+    // Save form record
     const save = () => {
         setLoading(true)
         if (form) {
@@ -90,6 +97,8 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
             }
 
             let requiredAnswers: string[] = []
+
+            // Validate required fields and build sourceData
             Object.entries(answer).map(([key, value]) => {
 
                 if (form.fields[key].required && (value === undefined || value === null || value === "")) {
@@ -100,12 +109,14 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
                 sourceRecord.sourceData.push(sourceData)
             })
 
+            // Show error if required answers are missing
             if (requiredAnswers.length > 0) {
                 onError(`Please, enter valid answers for: ${requiredAnswers.join(", ")}`)
                 setLoading(false)
                 return
             }
 
+            // Send data to API
             createSourceRecord(sourceRecord).then(r => {
                 setLoading(false)
                 onSuccess("Record saved successfully.")
@@ -117,6 +128,7 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
         }
     }
 
+    // Converts values to string format before saving
     const typeConverter = (value: any) => {
         let answer: string
 
@@ -134,6 +146,7 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
         return answer
     }
 
+    // Prepare and load form data from backend
     const setLoadedForm = (item: Form) => {
         setFormName(item?.name)
 
@@ -150,6 +163,7 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
         setForm(item)
     }
 
+    // Load form from API when component mounts
     useEffect(() => {
         if (params.id) {
             fetchById(params.id)

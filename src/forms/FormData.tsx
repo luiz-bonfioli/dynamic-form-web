@@ -11,6 +11,7 @@ type FormDataProps = {
     onError: (error: string) => void
 }
 
+// This is the component responsible to generate a dynamic table and show the records collected to the form
 export function FormData({onError}: FormDataProps) {
 
     const params = useParams<{ id: string }>()
@@ -18,14 +19,17 @@ export function FormData({onError}: FormDataProps) {
     const [columns, setColumns] = useState<{ id: string, field: string, header: string }[]>([])
     const [formName, setFormName] = useState("")
 
+    // Custom table header showing the form name
     const header = (
         <div className="flex flex-wrap align-items-center justify-content-between gap-2">
             <span className="text-xl text-900 font-bold">{formName}</span>
         </div>
     )
 
+    // Load form info and related data when the component mounts
     useEffect(() => {
         if (params.id) {
+            // Fetch the form by ID to get its name
             fetchById(params.id).then((form) => {
                 setFormName(form.name)
             }).catch(err => {
@@ -33,15 +37,18 @@ export function FormData({onError}: FormDataProps) {
                 onError("Something went wrong. Please try again later.")
             })
 
+            // Fetch the records associated with the form
             fetchByFormId(params.id)
                 .then((item) => {
                         if (item.length > 0) {
+                            // Build table columns based on the questions in the data
                             const columnsArray = item[0].sourceData.map((sourceData) => ({
                                 id: sourceData.id ? sourceData.id : "",
                                 field: sourceData.question,
                                 header: sourceData.question
                             }))
 
+                            // Build table rows where each row maps question -> answer
                             const sourceDataArray: Record<string, string>[] = []
                             item.forEach(record => {
                                 const row: Record<string, string> = {}
@@ -52,6 +59,8 @@ export function FormData({onError}: FormDataProps) {
                                 })
                                 sourceDataArray.push(row)
                             })
+
+                            // Set the column config and data for the DataTable
                             setColumns(columnsArray)
                             setSourceData(sourceDataArray)
                         }
@@ -67,6 +76,7 @@ export function FormData({onError}: FormDataProps) {
     return (
         <Container>
             {columns ? (
+                // Render the dynamic table with data and headers
                 <DataTable header={header} value={sourceData} tableStyle={{minWidth: '50rem'}}>
                     {columns.map((col, i) => (
                         <Column key={col.id} field={col.field} header={col.header}/>

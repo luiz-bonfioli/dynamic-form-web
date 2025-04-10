@@ -10,16 +10,19 @@ import {FormFill} from "../forms/FormFill";
 import {FormData} from "../forms/FormData";
 import {Toast} from "primereact/toast";
 
-
+// Main layout component responsible for rendering the overall structure of the app
 export function Layout() {
 
+    // Toast reference used to display notifications
     const toast = useRef(null);
 
+    // Displays a success toast notification
     const showSuccess = (message: string) => {
         // @ts-ignore
         toast.current.show({severity: 'success', summary: 'Success', detail: message, life: 3000});
     }
 
+    // Displays an error toast notification
     const showError = (message: string) => {
         // @ts-ignore
         toast.current.show({severity: 'error', summary: 'Error', detail: message, life: 3000});

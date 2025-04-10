@@ -1,7 +1,12 @@
 import {Form, FormListResponse, FormResponse} from "../models/FormModels";
 
+// Base URL for all form-related API calls
 const BASE_URL = 'http://127.0.0.1:8080/form'
 
+/**
+ * Fetches all forms from the backend
+ * @returns A promise that resolves to a list of forms
+ */
 export async function fetchAll() {
     try {
         const response = await fetch(`${BASE_URL}`)
@@ -16,6 +21,11 @@ export async function fetchAll() {
     }
 }
 
+/**
+ * Fetches a specific form by its ID
+ * @param id - The ID of the form to retrieve
+ * @returns A promise that resolves to a single form
+ */
 export async function fetchById(id: string) {
     try {
         const response = await fetch(`${BASE_URL}/${id}`)
@@ -30,6 +40,11 @@ export async function fetchById(id: string) {
     }
 }
 
+/**
+ * Creates a new form in the backend
+ * @param form - The form object to be saved
+ * @returns A promise that resolves to the response from the backend
+ */
 export async function createForm(form: Form) {
     try {
         const response = await fetch(`${BASE_URL}`, {
