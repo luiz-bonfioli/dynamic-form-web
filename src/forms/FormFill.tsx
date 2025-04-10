@@ -68,7 +68,6 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
                     <Checkbox className="w-full"
                               checked={answer[key]}
                               onChange={(e) => onAnswerChanged(key, e.checked)}/>
-                    <label className="ml-2">Boolean</label>
                 </div>)
             case 'rating':
                 return renderField(key, <Rating className="w-full" cancel={false}
