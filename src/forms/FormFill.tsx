@@ -9,8 +9,8 @@ import {Button} from "primereact/button"
 import styles from '../layout/layout.module.css'
 import {Rating} from "primereact/rating"
 import {Checkbox} from "primereact/checkbox"
-import {Field, Form, SourceRecord} from "../models/FormModels";
-import {createSourceRecord} from "../services/SourceService";
+import {Field, Form, SourceRecord} from "../models/FormModels"
+import {createSourceRecord} from "../services/SourceService"
 
 type FormFillProps = {
     onSuccess: (message: string) => void
@@ -89,11 +89,22 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
                 sourceData: []
             }
 
+            let requiredAnswers: string[] = []
             Object.entries(answer).map(([key, value]) => {
+
+                if (form.fields[key].required && (value === undefined || value === null || value === "")) {
+                    requiredAnswers.push(question[key])
+                }
+
                 const sourceData = {answer: typeConverter(value), question: question[key]}
                 sourceRecord.sourceData.push(sourceData)
             })
-            console.log(sourceRecord)
+
+            if (requiredAnswers.length > 0) {
+                onError(`Please, enter valid answers for: ${requiredAnswers.join(", ")}`)
+                setLoading(false)
+                return
+            }
 
             createSourceRecord(sourceRecord).then(r => {
                 setLoading(false)

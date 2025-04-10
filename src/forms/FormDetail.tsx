@@ -10,7 +10,7 @@ import styles from '../layout/layout.module.css'
 import {Dialog} from "primereact/dialog"
 import {Rating} from "primereact/rating"
 import {Checkbox} from "primereact/checkbox"
-import {Field, FieldType, Form} from "../models/FormModels";
+import {Field, FieldType, Form} from "../models/FormModels"
 
 type FormDetailProps = {
     onSuccess: (message: string) => void
