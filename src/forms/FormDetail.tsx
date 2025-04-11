@@ -233,29 +233,32 @@ export function FormDetail({onSuccess, onError}: FormDetailProps) {
                     }}>
 
                         <div className="grid grid-cols-1 gap-4">
-                            <div className="flex items-center gap-4"
+                            <div className="flex items-center gap-4 cursor-pointer"
                                  onClick={() => addNewComponent(FieldType.DATETIME)}>
                                 <i className="pi pi-fw pi-calendar !text-2xl"></i>
                                 <p>Date and time</p>
                             </div>
 
-                            <div className="flex items-center gap-4"
+                            <div className="flex items-center gap-4 cursor-pointer"
                                  onClick={() => addNewComponent(FieldType.TEXT)}>
                                 <i className="pi pi-fw pi-bars !text-2xl"></i>
                                 <p>Input Text</p>
                             </div>
 
-                            <div className="flex items-center gap-4" onClick={() => addNewComponent(FieldType.NUMBER)}>
+                            <div className="flex items-center gap-4 cursor-pointer"
+                                 onClick={() => addNewComponent(FieldType.NUMBER)}>
                                 <i className="pi pi-fw pi-sort-numeric-down !text-2xl"></i>
                                 <p>Input Number</p>
                             </div>
 
-                            <div className="flex items-center gap-4" onClick={() => addNewComponent(FieldType.BOOLEAN)}>
+                            <div className="flex items-center gap-4 cursor-pointer"
+                                 onClick={() => addNewComponent(FieldType.BOOLEAN)}>
                                 <i className="pi pi-fw pi-check !text-2xl"></i>
                                 <p>Boolean</p>
                             </div>
 
-                            <div className="flex items-center gap-4" onClick={() => addNewComponent(FieldType.RATING)}>
+                            <div className="flex items-center gap-4 cursor-pointer"
+                                 onClick={() => addNewComponent(FieldType.RATING)}>
                                 <i className="pi pi-fw pi-star !text-2xl"></i>
                                 <p>Rating</p>
                             </div>
