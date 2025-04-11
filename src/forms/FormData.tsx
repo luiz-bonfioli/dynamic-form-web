@@ -26,50 +26,61 @@ export function FormData({onError}: FormDataProps) {
         </div>
     )
 
-    // Load form info and related data when the component mounts
-    useEffect(() => {
-        if (params.id) {
-            // Fetch the form by ID to get its name
-            fetchById(params.id).then((form) => {
-                setFormName(form.name)
-            }).catch(err => {
+    // Fetches the form
+    const fetchForm = (formId: string) => {
+        // Fetch the form by ID to get its name
+        fetchById(formId).then((form) => {
+            setFormName(form.name)
+        }).catch(err => {
+            console.log(err)
+            onError("Something went wrong. Please try again later.")
+        })
+    }
+
+    // Fetches the form records
+    const fetchRecords = (formId: string) => {
+        fetchByFormId(formId)
+            .then((item) => {
+                    if (item.length > 0) {
+                        // Build table columns based on the questions in the data
+                        const columnsArray = item[0].sourceData.map((sourceData) => ({
+                            id: sourceData.id ? sourceData.id : "",
+                            field: sourceData.question,
+                            header: sourceData.question
+                        }))
+
+                        // Build table rows where each row maps question -> answer
+                        const sourceDataArray: Record<string, string>[] = []
+                        item.forEach(record => {
+                            const row: Record<string, string> = {}
+                            record.sourceData.forEach(sourceData => {
+                                const key = sourceData.question
+                                row[key] = sourceData.answer
+
+                            })
+                            sourceDataArray.push(row)
+                        })
+
+                        // Set the column config and data for the DataTable
+                        setColumns(columnsArray)
+                        setSourceData(sourceDataArray)
+                    }
+                }
+            )
+            .catch(err => {
                 console.log(err)
                 onError("Something went wrong. Please try again later.")
             })
+    }
+
+    // Load form info and related data when the component mounts
+    useEffect(() => {
+        if (params.id) {
+            // Fetch the form
+            fetchForm(params.id)
 
             // Fetch the records associated with the form
-            fetchByFormId(params.id)
-                .then((item) => {
-                        if (item.length > 0) {
-                            // Build table columns based on the questions in the data
-                            const columnsArray = item[0].sourceData.map((sourceData) => ({
-                                id: sourceData.id ? sourceData.id : "",
-                                field: sourceData.question,
-                                header: sourceData.question
-                            }))
-
-                            // Build table rows where each row maps question -> answer
-                            const sourceDataArray: Record<string, string>[] = []
-                            item.forEach(record => {
-                                const row: Record<string, string> = {}
-                                record.sourceData.forEach(sourceData => {
-                                    const key = sourceData.question
-                                    row[key] = sourceData.answer
-
-                                })
-                                sourceDataArray.push(row)
-                            })
-
-                            // Set the column config and data for the DataTable
-                            setColumns(columnsArray)
-                            setSourceData(sourceDataArray)
-                        }
-                    }
-                )
-                .catch(err => {
-                    console.log(err)
-                    onError("Something went wrong. Please try again later.")
-                })
+            fetchRecords(params.id);
         }
     }, [params])
 

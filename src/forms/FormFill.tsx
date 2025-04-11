@@ -167,9 +167,11 @@ export function FormFill({onSuccess, onError}: FormFillProps) {
         if (params.id) {
             fetchById(params.id)
                 .then((item) => setLoadedForm(item))
-                .catch(err => console.log(err))
+                .catch(err => {
+                    console.log(err)
+                    onError("Something went wrong. Please try again later.")
+                })
         }
-
     }, [params])
 
     return (
