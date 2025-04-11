@@ -8,7 +8,6 @@ import "./index.css";
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 
-import "./App.css";
 import {BrowserRouter} from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
