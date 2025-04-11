@@ -3,7 +3,6 @@ import styles from './layout.module.css';
 
 // @ts-expect-error Children is generic
 export function Sidebar({children}) {
-
     return (
         <div className={styles.layoutSidebar}>
             {children}
@@ -12,6 +11,3 @@ export function Sidebar({children}) {
 }
 
 export default Sidebar
-
-
-

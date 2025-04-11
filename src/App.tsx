@@ -1,7 +1,6 @@
-import './App.css'
+// import './App.css'
 import {Layout} from "./layout/Layout";
 import React from "react";
-import {Toast} from "primereact/toast";
 
 // The main App with the Layout: topbar, sidebar and container
 function App() {

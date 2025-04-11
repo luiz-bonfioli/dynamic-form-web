@@ -42,6 +42,21 @@ npm run dev
 
 4. Access the App in localhost at http://localhost:5173/
 
+### Execute Unit Tests
+Execute the unit tests running the command below:
+```shell
+npx jest
+```
+Expected result:
+```
+PASS  tests/Container.test.tsx
+PASS  tests/App.test.tsx
+PASS  tests/Sidebar.test.tsx
+
+Test Suites: 3 passed, 3 total
+Tests:       3 passed, 3 total
+```
+
 ### Build for Production
 
 ```bash
