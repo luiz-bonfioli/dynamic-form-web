@@ -19,6 +19,12 @@ node -v
 npm -v
 ```
 
+### Frameworks 
+
+- Tailwind css
+- Primereact components
+-Vite
+
 ### Installation
 
 1. Clone the repository
