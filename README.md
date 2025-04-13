@@ -23,7 +23,7 @@ npm -v
 
 - Tailwind css
 - Primereact components
--Vite
+- Vite
 
 ### Installation
 
